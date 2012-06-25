@@ -22,13 +22,10 @@ uint8_t sd_init(void)
 	
 	for(int i = 0; i <= 100; i++)
 	{
-		uart_tx_string("SD-CARD INIT TRY\n");
 		if(sd_tx_cmd(GO_IDLE_STATE, 0, 0x95) == 0x01)
 		{
-			uart_tx_string("GO IDLE STATE ACCEPTED\n");
 			if(sd_tx_cmd(SEND_IF_COND, 0x1aa, 0x87) == 0x01)
 			{
-				uart_tx_string("SEND IF CONDITION ACCEPTED\n");
 				for(int i = 0; i < 4; i++)
 				{
 					res[i] = spi_rx_byte();
@@ -169,9 +166,10 @@ static uint8_t sd_ready(void)
 //| SD SINGLE BLOCK READ OF 512Bytes		 |
 //+==========================================+
 
-uint8_t sd_single_block_read(uint32_t address, uint8_t *buffer)
+uint8_t sd_single_block_read(uint32_t addr, uint8_t *buffer)
 {
 	uint8_t token;
+	uint32_t address = addr;
 
 	if(SD_TYPE != SD_VER2_BLOCK)			// if SD-type isn't using block-addressing
 		address *= 512;						// convert to byte-address
@@ -183,15 +181,21 @@ uint8_t sd_single_block_read(uint32_t address, uint8_t *buffer)
 	do
 	{
 		token = spi_rx_byte();
-	}while((token == 0xff) && timer);
+	}while((token != 0xfe) && timer);
 
 	if(token != 0xfe)
+	{
 		return 0;
-
+	}
+	
+	//uart_tx_string("---\n");
 	for(int i = 0; i < 512; i++)
 	{
 		*buffer++ = spi_rx_byte();
+		//uart_tx_char(*(buffer - 1));
 	}
+	//uart_tx_char('\n');
+	//uart_tx_string("---\n");
 
 	spi_rx_byte();
 	spi_rx_byte();							// discard 16bit CRC-token
@@ -203,6 +207,7 @@ uint8_t sd_single_block_read(uint32_t address, uint8_t *buffer)
 //+==========================================+
 //| SD SINGLE BLOCK WRITE OF 512Bytes		 |
 //+==========================================+
+
 uint8_t sd_single_block_write(uint32_t address, uint8_t *buffer)
 {
 	uint8_t res;

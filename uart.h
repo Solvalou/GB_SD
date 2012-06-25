@@ -29,10 +29,16 @@ void uart_tx_hex32(uint32_t hex);
 
 static uint8_t hex_to_ascii(uint8_t hex);
 
-#define TX_BUFSIZE 40
-#define RX_BUFSIZE 40
+#define TX_BUFSIZE 10
+#define RX_BUFSIZE 10
 
 extern ISR(SIG_UART_RECV);
 extern ISR(SIG_UART_DATA);
+
+// RX STATUS
+extern uint8_t rx_status;
+
+#define RX_ENABLE	1
+#define RX_DISABLE	0
 
 #endif

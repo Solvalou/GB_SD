@@ -34,7 +34,7 @@ uint8_t fifo_pop(fifo_t *f)
 {
 	if(f->pos_read == f->pos_write)
 	//if(f->count == 0)
-		return 1;
+		return;
 
 	uint8_t data;		
 	data = *(f->ptr_read++);

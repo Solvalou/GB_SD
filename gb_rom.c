@@ -33,7 +33,7 @@ void gb_rom_write(void)
 		}
 	}
 	
-	uart_tx_string("DONE!\n");
+	//uart_tx_string("DONE!\n");
 }
 
 void gb_rom_verify(void)

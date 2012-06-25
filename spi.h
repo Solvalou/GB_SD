@@ -8,7 +8,7 @@
 #define SS		4
 #define MOSI	5
 #define MISO	6
-#define SCK	7
+#define SCK		7
 
 extern void spi_init(void);
 extern void spi_tx_byte(uint8_t byte);

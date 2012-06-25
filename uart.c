@@ -4,6 +4,7 @@
 #include "uart.h"
 #include "fifo.h"
 
+uint8_t rx_status = RX_DISABLE;
 
 uint8_t tx_buf[TX_BUFSIZE];
 fifo_t tx_fifo =
@@ -113,7 +114,8 @@ static uint8_t hex_to_ascii(uint8_t hex)
 
 ISR(SIG_UART_RECV)
 {
-	fifo_push(&rx_fifo, UDR);
+	if(rx_status == RX_ENABLE)
+		fifo_push(&rx_fifo, UDR);
 }
 
 ISR(SIG_UART_DATA)
